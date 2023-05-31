@@ -1,8 +1,8 @@
 ##### DMI station map #####
 ## Author: Bianca E. Sandvik (May 2023)
 
-## This script plots the significant DMI stations listed (based on ERA5-DMI wind speed) onto a map with their station ID with colour 
-## indiaction for their significance level. 
+## This script plots the significant DMI stations listed (based on ERA5-DMI wind speed and alpha) onto a map with their station ID 
+## with colour indiaction for their significance level. 
 
 # Import packages:
 import pandas as pd
@@ -10,7 +10,6 @@ import numpy as np
 import glob       
 import pandas as pd
 import matplotlib.pyplot as plt
-#from mpl_toolkits.basemap import Basemap
 from matplotlib.lines import Line2D
 import cartopy.crs as ccrs
 import cartopy.io.img_tiles as cimgt
@@ -81,52 +80,9 @@ for i in range(len(not_mark_down)):                                     #convert
 df_mark_up = DMIstations.iloc[not_mark_down]                            #create dataframe with only upward slopes
 df_mark_up.reset_index(inplace=True, drop=True)                         #reset index
 
+        
 
-
-# Create map with Basemap:
-distance = np.round(100*0.56,0)                                             #calculation of correct map scale
-
-fig, ax = plt.subplots(figsize=[10, 8])
-legend_elements = [Line2D([0], [0], marker='o', color='#D5D7D2', label='<0.01', markerfacecolor='limegreen', markersize=10),
-                   Line2D([0], [0], marker='o', color='#D5D7D2', label='<0.05', markerfacecolor='gold', markersize=10),
-                   Line2D([0], [0], marker='o', color='#D5D7D2', label='<0.10', markerfacecolor='orangered', markersize=10)]
-ax.legend(handles=legend_elements)                                         #create custom legend
-m = Basemap(llcrnrlon=6.9,llcrnrlat=54,urcrnrlon=15.4,urcrnrlat=58,
-            epsg=3857, lat_1=54, lat_2=58, lat_0=56, lon_0=8.5,
-            resolution='f')                                                 #define map projection and area
-m.arcgisimage(xpixels=1000)                                                 #define mapimage
-# m.drawcoastlines(color='grey')                                              #draw coastlines and countries
-# m.drawcountries()
-# m.drawmapboundary(fill_color='#99ffff')                                     #define mapboundary colour
-# m.fillcontinents(color='#cc9966',lake_color='#99ffff')                      #define colour of land and ocean
-# lats = DMIstations.Latitude                                                 #define positions of DMI stations
-# lons = DMIstations.Longitude
-# x, y = m(lons,lats)
-x_down, y_down = m(df_mark_down.Longitude, df_mark_down.Latitude)
-x_up, y_up = m(df_mark_up.Longitude, df_mark_up.Latitude)
-for i,txt in enumerate(df_mark_down.Station_ID):
-    ax.annotate(txt, (x_down[i], y_down[i]), xytext=(1,1), textcoords='offset points', size=8, fontweight='medium', style='italic', color='lightgray')
-    plt.scatter(x_down, y_down, 10, marker='v', color=df_mark_down.Sign_col)
-for i,txt in enumerate(df_mark_up.Station_ID):
-    ax.annotate(txt, (x_up[i], y_up[i]), xytext=(1,1), textcoords='offset points', size=8, fontweight='medium', style='italic', color='lightgray')
-    plt.scatter(x_up, y_up, 10, marker='^', color=df_mark_up.Sign_col)
-#for i,txt in enumerate(DMIstations.Station_ID):
-    #ax.annotate(txt, (x[i], y[i]), xytext=(1,1), textcoords='offset points', size=8, fontweight='medium', style='italic', color='lightgray')
-    #plt.scatter(x, y, 10, marker='o', color=sign_col)
-        #Create scatter of station locations with station ID attached to the upper right corner
-m.drawmapscale(lon=7.5,lat=54.3,lon0=8.5,lat0=56,length=100, fontsize=8, fontcolor='lightgray')                    #set scale bar
-ax.text(55659.74539663678, 28459.542818231508, distance, size=8, color='lightgray', backgroundcolor='#19414f')     #overwrite scale number with correct distance
-plt.title('Significant DMI station locations')                                                              #set title
-#plt.show()
-
-#plt.savefig("significant_station_locations_terrain.png", dpi=200)                           #save map as png
-plt.close(None)         
-
-
-## With cartopy:
-import cartopy.crs as ccrs
-import cartopy.io.img_tiles as cimgt
-
+# Create map for wind speed:
 terrain = cimgt.GoogleTiles(style='satellite')                              #import satellite image
 
 fig = plt.figure(figsize=(10, 8))                                           #define subplot 
@@ -253,74 +209,4 @@ plt.title('Significant DMI station locations for ' + r'$\alpha$')
 #plt.show()
 plt.savefig("significant_station_locations_alpha.png", dpi=200)                           #save map as png
 plt.close(None)  
-
-
-
-
-
-
-
-
-
-
-### Map of positional changes:
-
-from matplotlib.lines import Line2D
-
-lon_list_start = []                                                     #create empty list to hold location variables
-lat_list_start = []
-lon_list_end = []                                              
-lat_list_end = []
-
-for station in st_ID:
-    glob_string = 'DMI_ERA5_' + station + '_monthly.parq.gzip'          #Create a dynamic string for input to search for station specific parquet-files
-    dmi_ERA5_zip = glob.glob(glob_string)                               #Find station specific parquet-files in current directory
-    for i in dmi_ERA5_zip:
-        df = pd.read_parquet(i)                                         #Read and print parquet-file
-        #print(df)
-
-        lon_list_start.append(df.DMI_Lon[0])                            #insert start longitude position into list
-        lat_list_start.append(df.DMI_Lat[0])                            #insert start latitude position into list
-        lon_list_end.append(df.DMI_Lon[-1])                             #insert final longitude position into list
-        lat_list_end.append(df.DMI_Lat[-1])                             #insert final latitude position into list
-
-DMIstations.insert(2,'Lon_start', lon_list_start)                       #insert location into dataframe as new column
-DMIstations.insert(3,'Lat_start', lat_list_start)     
-DMIstations.insert(4,'Lon_end', lon_list_end) 
-DMIstations.insert(5,'Lat_end', lat_list_end)  
-
-
-# Create map:
-fig, ax = plt.subplots(figsize=[10, 8])
-legend_elements = [Line2D([0], [0], marker='o', color='w', label='Start location', markerfacecolor='crimson', markersize=10),
-                   Line2D([0], [0], marker='o', color='w', label='End location', markerfacecolor='darkslateblue', markersize=10)]
-plt.legend(handles=legend_elements)                                         #create custom legend
-m = Basemap(llcrnrlon=6.9,llcrnrlat=54,urcrnrlon=15.4,urcrnrlat=58,
-            epsg=3857, lat_1=54, lat_2=58, lat_0=56, lon_0=8.5,
-            resolution='f')                                                 #define map projection and area
-m.drawcoastlines(color='grey')                                              #draw coastlines and countries
-m.drawcountries()
-m.drawmapboundary(fill_color='#99ffff')                                     #define mapboundary colour
-m.fillcontinents(color='#cc9966',lake_color='#99ffff')                      #define colour of land and ocean
-lats = DMIstations.Lat_start                                                #define starting positions of DMI stations
-lons = DMIstations.Lon_start
-x1, y1 = m(lons,lats)
-plt.scatter(x1, y1, 15, marker='o', color='crimson')
-    #Create scatter of station locations with station ID attached to the upper right corner
-late = DMIstations.Lat_end                                                  #define end positions of DMI stations
-lone = DMIstations.Lon_end
-x2, y2 = m(lone,late)
-plt.scatter(x2, y2, 15, marker='o', color='darkslateblue')
-    #Create scatter of station locations with station ID attached to the upper right corner
-m.drawmapscale(lon=7.5,lat=54.3,lon0=8,lat0=54.1,length=50, fontsize=8)    #add scale bar
-plt.title('DMI station locations')                                          #set title
-plt.show()
-
-
-
-
-
-
-
-
 
