@@ -37,9 +37,6 @@ dv_1D = dv.mean(dim='time')
 v10 = dv_1D.variables['v10']                                                #define variables
 u10 = de_1D.variables['u10']
 
-# Test:
-# u = xr.ones_like(ug)
-# v = xr.zeros_like(vg)
 
 
 
@@ -83,14 +80,10 @@ v10_ar = np.zeros( (ntime,nlat,nlon) )                                #convert n
 for ilat in range(nlat):
     v10_ar[:,:,:] = v10_full[:,:,:]
 
-#Trials:
-# abs(vg_full[0][0][3]).mean() - abs(v10_ar[0][0][3]).mean()
-# abs(ug_full[0][0][3]).mean() - abs(u10_ar[0][0][3]).mean()
-# abs(ws_array[0][0][3]).mean() - abs(ws10[0][0][3]).mean()
-# abs(ws_array[0][0][14]).mean() - abs(ws10[0][0][14]).mean()
 
 
-diff = np.zeros( (ntime,nlat,nlon) )                                        #calculate difference between geostrophic wind speed and 10m wind speed
+#calculate difference between geostrophic wind speed and 10m wind speed
+diff = np.zeros( (ntime,nlat,nlon) )                                        
 for ilat in range(nlat):
     diff = ws_array[:,:,:] - ws10[:,:,:]
 
