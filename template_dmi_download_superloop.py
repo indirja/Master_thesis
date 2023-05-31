@@ -212,8 +212,3 @@ for station in st_ID:
     print_parquet
 
 print_parquet = pd.read_parquet('dmi_data_06156.parq.gzip')
-
-
-# # Delete?:
-# with np.printoptions(threshold=np.inf):                         #Print all values for na-array
-#      print(new_df[263080:263088])
