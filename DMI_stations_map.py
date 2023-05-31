@@ -75,19 +75,6 @@ plt.savefig("DMI_station_locations_terrain.png", dpi=200)                       
 plt.close(None)         
 
 
-# Pyplot Express:
-#   Plots interactive map on internett. NOT IDEAL for our use.
-# px.set_mapbox_access_token(open(".mapbox_token").read())
-# fig = px.scatter_geo(DMIstations,
-#                     lat=DMIstations.Latitude,
-#                     lon=DMIstations.Longitude,
-#                     hover_name="Station_name")
-# fig.update_layout(
-#         title = 'DMI stations',
-#         geo_scope='europe',
-#     )
-# fig.show()
-
 
 
 ### Map of positional changes:
