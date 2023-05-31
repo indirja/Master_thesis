@@ -1,4 +1,4 @@
-##### Geostropic wind calculation #####
+##### Geostrophic wind calculation #####
 ## Author: Bianca E. Sandvik (March 2023)
 
 ## This file calculates the geostrophic wind components (ug and vg), wind speed and wind direction from a netCDF-file containing 
