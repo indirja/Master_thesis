@@ -3,7 +3,7 @@
 This repository includes all of the Python scripts used for the master thesis "Impact of Wind Turbines on Local and Regional Winds Across Denmark" by Bianca E. Sandvik delivered 31. May 2023. 
 
 
-#### The most of the scripts build heavliy on each other and should be run in the following order:
+ Most of the scripts build heavliy on each other and should be run in the following order:
 
 1. Data collection and data processing
    - geostrophic_wind.py       
